@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,12 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Category {
-  id        Int      @id @default(autoincrement())
+model Task {
+  id        String   @id @default(uuid())
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId    String?
+
+  completed Boolean @default(false)
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String
+  family    Family  @relation(fields: [familyId], references: [id])
+  familyId  String
+  points    Int     @default(10)
 }
 
 enum UserRole {
@@ -21,8 +26,17 @@ enum UserRole {
   ADMIN
 }
 
+model Family {
+  id        String   @id @default(uuid())
+  name      String
+  users     User[]
+  tasks     Task[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model User {
-  id            String    @id @default(cuid())
+  id            String    @id @default(uuid())
   name          String?
   email         String    @unique
   emailVerified DateTime?
@@ -30,9 +44,12 @@ model User {
   password      String?
   role          UserRole  @default(USER)
   accounts      Account[]
+  tasks         Task[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  family    Family?  @relation(fields: [familyId], references: [id])
+  familyId  String?
 }
 
 model Account {
@@ -54,13 +71,4 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([provider, providerAccountId])
-}
-
-model VerificationToken {
-  id      String   @id @default(cuid())
-  email   String
-  token   String   @unique
-  expires DateTime
-
-  @@unique([email, token])
 }

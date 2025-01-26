@@ -1,18 +1,13 @@
 import * as z from "zod";
 
-export const LoginSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(1, { message: "Password is required" }),
-});
-
-export type LoginType = z.infer<typeof LoginSchema>;
-
-export const registerSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z
+export const TaskSchema = z.object({
+  name: z
     .string()
-    .min(6, { message: " Password must be at least 6 characters long" }),
-  name: z.string().min(2, { message: "Name is required" }),
+    .min(3, { message: "Task name is required at least 3 characters" })
+    .nonempty("Task name is required"),
+  memberId: z
+    .string()
+    .min(3, { message: "Member ID is required" })
+    .nonempty({ message: "Member ID is required" }),
 });
-
-export type RegisterType = z.infer<typeof registerSchema>;
+export type TaskType = z.infer<typeof TaskSchema>;

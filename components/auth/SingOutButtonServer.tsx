@@ -2,7 +2,7 @@
 
 import { Button } from "../ui/button";
 
-import { signOutAction } from "@/actions/signOutAction";
+import { signOutAction } from "@/app/actions/signOutAction";
 
 const SignoutButton = () => {
   return (

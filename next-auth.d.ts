@@ -1,8 +1,10 @@
-import { UserRole } from "@prisma/client";
+import { Task, UserRole } from "@prisma/client";
 import { type DefaultSession } from "next-auth";
 
 export type ExtendedUser = DefaultSession["user"] & {
   role: UserRole;
+  tasks: Task[];
+  
 };
 
 declare module "next-auth" {

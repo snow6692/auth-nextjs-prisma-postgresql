@@ -3,7 +3,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import authConfig from "./auth.config";
 import prisma from "./lib/db";
 import { getUserById } from "./data/user";
-import { UserRole } from "@prisma/client";
+import { Task, UserRole } from "@prisma/client";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   pages: {
@@ -28,17 +28,15 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       const existingUser = await getUserById(user.id!);
       if (!existingUser?.emailVerified) return false;
 
-      //TODO: Add Email 2fa check
-
       return true;
     },
     async session({ token, session }) {
-      console.log(token);
       if (token.sub && session.user) {
         session.user.id = token.sub;
       }
 
       //add any field here and in next-auth.d.ts
+      session.user.tasks = token.tasks as Task[];
       // session.user.customField="custom";
 
       if (token.role && session.user) {
